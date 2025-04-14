@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Калькулятор распила (iPhone стиль)</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(to bottom, #eaeaea, #d4d4d4);
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            background: #b0b0b0;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: inset 0 -1px 0 rgba(255,255,255,0.4);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 3px;
+            margin-bottom: 10px;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            background: #fefefe;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(to bottom, #5dade2, #2e86c1);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px #1b4f72;
+            cursor: pointer;
+        }
+
+        button:active {
+            box-shadow: 0 2px #1b4f72;
+            transform: translateY(2px);
+        }
+
+        p, #finalResult {
+            font-size: 16px;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+
+        #finalResult {
+            font-weight: bold;
+            background: #f5f5f5;
+            border: 1px solid #ccc;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <h2>Калькулятор глубины врезания пил</h2>
+
+    <label>Толщина доски (мм):</label>
+    <input type="number" id="board" value="50" step="0.01">
+
+    <label>Количество заготовок:</label>
+    <input type="number" id="pieces" value="3">
+
+    <label>Толщина нижней пилы (мм):</label>
+    <input type="number" id="kerfBottom" value="2.0" step="0.01">
+
+    <label>Толщина верхней пилы (мм):</label>
+    <input type="number" id="kerfTop" value="2.0" step="0.01">
+
+    <label>Желаемая толщина заготовки (мм):</label>
+    <input type="number" id="targetThickness" value="18" step="0.01">
+
+    <label>Допустимая погрешность (мм):</label>
+    <input type="number" id="tolerance" value="0.5" step="0.01">
+
+    <label>Износ пилы (мм):</label>
+    <input type="number" id="wear" value="0.2" step="0.01">
+
+    <label>Скорость подачи материала (мм/сек):</label>
+    <input type="number" id="feedSpeed" value="100" step="1">
+
+    <button onclick="calculate()">Рассчитать</button>
+
+    <h3>Результаты:</h3>
+    <p id="result"></p>
+
+    <h3>Готовый результат:</h3>
+    <p id="finalResult"></p>
+
+    <script>
+        function calculate() {
+            const board = parseFloat(document.getElementById("board").value);
+            const pieces = parseInt(document.getElementById("pieces").value);
+            const kerfBottom = parseFloat(document.getElementById("kerfBottom").value);
+            const kerfTop = parseFloat(document.getElementById("kerfTop").value);
+            const targetThickness = parseFloat(document.getElementById("targetThickness").value);
+            const tolerance = parseFloat(document.getElementById("tolerance").value);
+            const wear = parseFloat(document.getElementById("wear").value);
+            const feedSpeed = parseFloat(document.getElementById("feedSpeed").value);
+
+            const autoClimate = 0.2;
+            const autoFlatness = 0.3;
+            const calibration = 0.2;
+
+            if (pieces < 2 || board <= 0 || kerfBottom <= 0 || kerfTop <= 0 ||
+                targetThickness <= 0 || tolerance < 0 || wear < 0 || feedSpeed <= 0) {
+                document.getElementById("result").innerHTML = "Проверьте ввод.";
+                document.getElementById("finalResult").innerHTML = "";
+                return;
+            }
+
+            const avgKerf = (kerfBottom + kerfTop) / 2;
+            const totalKerf = avgKerf * (pieces - 1);
+            const totalTarget = targetThickness * pieces;
+            const totalCompensation = wear + autoClimate + autoFlatness + calibration;
+            const totalNeeded = totalTarget + totalKerf + totalCompensation;
+
+            let output = "";
+            let final = "";
+
+            if (totalNeeded > board + tolerance) {
+                output += "<b style='color:red;'>Ошибка:</b> Недостаточно толщины доски для всех условий.<br>";
+                output += "Нужно минимум: <b>" + totalNeeded.toFixed(2) + " мм</b><br>";
+                final = "<span style='color:red;'><b>Распил невозможен без корректировок.</b></span>";
+            } else {
+                if (totalNeeded > board) {
+                    output += "<b style='color:orange;'>Внимание:</b> Параметры пограничные, но в пределах допуска.<br>";
+                }
+
+                const bottomCut = (targetThickness + kerfBottom / 2).toFixed(2);
+                const fromTop = targetThickness * (pieces - 1) + avgKerf * (pieces - 2) + kerfTop / 2;
+                const topCut = (board - fromTop).toFixed(2);
+
+                output += "Толщина одной заготовки: <b>" + targetThickness.toFixed(2) + " мм</b><br>";
+                output += "Общая компенсация: <b>" + totalCompensation.toFixed(2) + " мм</b><br>";
+                output += "Скорость подачи: <b>" + feedSpeed.toFixed(0) + " мм/сек</b><br>";
+                output += "Глубина нижней пилы (от низа): <b>" + bottomCut + " мм</b><br>";
+                output += "Глубина верхней пилы (от верха): <b>" + topCut + " мм</b>";
+
+                final = "<b>✔ Готово:</b> Можно получить " + pieces + " заготовок по " +
+                        targetThickness.toFixed(2) + " мм из доски " + board.toFixed(2) + " мм";
+            }
+
+            document.getElementById("result").innerHTML = output;
+            document.getElementById("finalResult").innerHTML = final;
+        }
+    </script>
+</body>
+</html>
