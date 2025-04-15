@@ -3,171 +3,191 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Калькулятор распила (iPhone стиль)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор 3-х досок</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background: linear-gradient(to bottom, #eaeaea, #d4d4d4);
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            background: linear-gradient(to bottom right, #a5cfff, #b6f2e6);
+            margin: 0 auto;
+            padding: 15px;
+            max-width: 100%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-
         h2 {
-            background: #b0b0b0;
-            color: white;
             text-align: center;
+            background: #6fbcd8;
+            color: white;
             padding: 10px;
-            border-radius: 8px;
-            box-shadow: inset 0 -1px 0 rgba(255,255,255,0.4);
+            border-radius: 10px;
         }
-
         label {
             font-weight: bold;
             display: block;
             margin-top: 10px;
         }
-
         input {
             width: 100%;
             padding: 8px;
-            margin-top: 3px;
-            margin-bottom: 10px;
+            margin-top: 4px;
+            margin-bottom: 12px;
+            border-radius: 6px;
             border: 1px solid #aaa;
-            border-radius: 8px;
-            background: #fefefe;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
         }
-
         button {
             width: 100%;
             padding: 10px;
-            background: linear-gradient(to bottom, #5dade2, #2e86c1);
+            background: linear-gradient(to bottom, #6ebeff, #4da6ff);
             color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
             font-weight: bold;
-            box-shadow: 0 4px #1b4f72;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
         }
-
-        button:active {
-            box-shadow: 0 2px #1b4f72;
-            transform: translateY(2px);
-        }
-
-        p, #finalResult {
-            font-size: 16px;
+        p {
             background: white;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-            margin-top: 10px;
-        }
-
-        #finalResult {
-            font-weight: bold;
-            background: #f5f5f5;
-            border: 1px solid #ccc;
-            color: #2c3e50;
         }
     </style>
 </head>
 <body>
-    <h2>Калькулятор глубины врезания пил</h2>
+    
+<div style="max-width: 900px; margin: 0 auto 20px auto;">
+  <div style="background: white; padding: 15px; border-radius: 10px; font-size: 13px; box-shadow: 0 0 5px rgba(0,0,0,0.1); max-width: 300px;">
+    <h3 style="margin-top: 0;">Погрешности по породам дерева</h3>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr style="background:#eee; font-weight:bold;">
+        <td style="border:1px solid #ccc; padding:6px;">Порода</td>
+        <td style="border:1px solid #ccc; padding:6px;">Погр. (мм)</td>
+      </tr>
+      <tr><td style="border:1px solid #ccc; padding:6px;">Сосна (сухая)</td><td style="border:1px solid #ccc; padding:6px;">±0.2</td></tr>
+      <tr><td style="border:1px solid #ccc; padding:6px;">Ель / Пихта</td><td style="border:1px solid #ccc; padding:6px;">±0.2</td></tr>
+      <tr><td style="border:1px solid #ccc; padding:6px;">Лиственница</td><td style="border:1px solid #ccc; padding:6px;">±0.3</td></tr>
+      <tr><td style="border:1px solid #ccc; padding:6px;">Дуб</td><td style="border:1px solid #ccc; padding:6px;">±0.5</td></tr>
+      <tr><td style="border:1px solid #ccc; padding:6px;">Ясень (влажный)</td><td style="border:1px solid #ccc; padding:6px;">±0.7</td></tr>
+      <tr><td style="border:1px solid #ccc; padding:6px;">Бук / Клён</td><td style="border:1px solid #ccc; padding:6px;">±0.4</td></tr>
+    </table>
+  </div>
+</div>
+
+<h2>Калькулятор</h2>
 
     <label>Толщина доски (мм):</label>
-    <input type="number" id="board" value="50" step="0.01">
-
-    <label>Количество заготовок:</label>
-    <input type="number" id="pieces" value="3">
+    <input type="number" id="board" value="59" step="0.01">
 
     <label>Толщина нижней пилы (мм):</label>
-    <input type="number" id="kerfBottom" value="2.0" step="0.01">
+    <input type="number" id="kerfBottom" value="1.3" step="0.01">
 
     <label>Толщина верхней пилы (мм):</label>
-    <input type="number" id="kerfTop" value="2.0" step="0.01">
+    <input type="number" id="kerfTop" value="1.3" step="0.01">
 
-    <label>Желаемая толщина заготовки (мм):</label>
-    <input type="number" id="targetThickness" value="18" step="0.01">
-
-    <label>Допустимая погрешность (мм):</label>
-    <input type="number" id="tolerance" value="0.5" step="0.01">
-
-    <label>Износ пилы (мм):</label>
+    <label>Погрешность из-за износа пилы (мм):</label>
     <input type="number" id="wear" value="0.2" step="0.01">
 
-    <label>Скорость подачи материала (мм/сек):</label>
-    <input type="number" id="feedSpeed" value="100" step="1">
+    <label>Желаемая толщина доски (мм):</label>
+    <input type="number" id="target" value="18" step="0.01">
 
-    <button onclick="calculate()">Рассчитать</button>
+    
+    <button onclick="calculate()">Обычный расчёт</button>
+    
+    
+    
 
-    <h3>Результаты:</h3>
+    
+    <label>Ручной ввод глубины нижней пилы (от низа, мм):</label>
+    <input type="number" id="manualBottom" value="" step="0.01" placeholder="Оставь пустым, если не используешь">
+
+    <label>Ручной ввод глубины верхней пилы (от верха, мм):</label>
+    <input type="number" id="manualTop" value="" step="0.01" placeholder="Оставь пустым, если не используешь">
+
+    <button onclick="calculateManual()">Рассчитать вручную</button>
+
+    <h3>Результат:</h3>
+    
     <p id="result"></p>
 
-    <h3>Готовый результат:</h3>
-    <p id="finalResult"></p>
-
     <script>
-        function calculate() {
-            const board = parseFloat(document.getElementById("board").value);
-            const pieces = parseInt(document.getElementById("pieces").value);
-            const kerfBottom = parseFloat(document.getElementById("kerfBottom").value);
-            const kerfTop = parseFloat(document.getElementById("kerfTop").value);
-            const targetThickness = parseFloat(document.getElementById("targetThickness").value);
-            const tolerance = parseFloat(document.getElementById("tolerance").value);
-            const wear = parseFloat(document.getElementById("wear").value);
-            const feedSpeed = parseFloat(document.getElementById("feedSpeed").value);
+    function calculate() {
+        const board = parseFloat(document.getElementById("board").value);
+        const kerfBottom = parseFloat(document.getElementById("kerfBottom").value);
+        const kerfTop = parseFloat(document.getElementById("kerfTop").value);
+        const wear = parseFloat(document.getElementById("wear").value);
+        const target = parseFloat(document.getElementById("target").value);
 
-            const autoClimate = 0.2;
-            const autoFlatness = 0.3;
-            const calibration = 0.2;
+        const total_target = target * 3 + kerfBottom + kerfTop;
+        const leftover = board - total_target;
+        const per_piece_addition = leftover / 3;
+        const adjusted = target + per_piece_addition - wear;
 
-            if (pieces < 2 || board <= 0 || kerfBottom <= 0 || kerfTop <= 0 ||
-                targetThickness <= 0 || tolerance < 0 || wear < 0 || feedSpeed <= 0) {
-                document.getElementById("result").innerHTML = "Проверьте ввод.";
-                document.getElementById("finalResult").innerHTML = "";
-                return;
-            }
+        const bottom_blade = adjusted + kerfBottom / 2;
+        const top_blade_center = bottom_blade + adjusted + kerfTop / 2 + kerfBottom / 2;
+        const top_blade = board - top_blade_center;
 
-            const avgKerf = (kerfBottom + kerfTop) / 2;
-            const totalKerf = avgKerf * (pieces - 1);
-            const totalTarget = targetThickness * pieces;
-            const totalCompensation = wear + autoClimate + autoFlatness + calibration;
-            const totalNeeded = totalTarget + totalKerf + totalCompensation;
+        const lower = bottom_blade - kerfBottom / 2;
+        const middle = (board - top_blade) - bottom_blade - kerfTop / 2 - kerfBottom / 2;
+        const upper = top_blade - kerfTop / 2;
 
-            let output = "";
-            let final = "";
+        document.getElementById("result").innerHTML =
+            "Глубина нижней пилы (от низа): <b>" + bottom_blade.toFixed(2) + " мм</b><br>" +
+            "Глубина верхней пилы (от верха): <b>" + top_blade.toFixed(2) + " мм</b><br><br>" +
+            "Толщина нижней доски: <b>" + lower.toFixed(2) + " мм</b><br>" +
+            "Толщина средней доски: <b>" + middle.toFixed(2) + " мм</b><br>" +
+            "Толщина верхней доски: <b>" + upper.toFixed(2) + " мм</b>";
+    }
 
-            if (totalNeeded > board + tolerance) {
-                output += "<b style='color:red;'>Ошибка:</b> Недостаточно толщины доски для всех условий.<br>";
-                output += "Нужно минимум: <b>" + totalNeeded.toFixed(2) + " мм</b><br>";
-                final = "<span style='color:red;'><b>Распил невозможен без корректировок.</b></span>";
-            } else {
-                if (totalNeeded > board) {
-                    output += "<b style='color:orange;'>Внимание:</b> Параметры пограничные, но в пределах допуска.<br>";
-                }
+    function calcFixedEdges() {
+        const board = parseFloat(document.getElementById("board").value);
+        const kerfBottom = parseFloat(document.getElementById("kerfBottom").value);
+        const kerfTop = parseFloat(document.getElementById("kerfTop").value);
+        const wear = parseFloat(document.getElementById("wear").value);
 
-                const bottomCut = (targetThickness + kerfBottom / 2).toFixed(2);
-                const fromTop = targetThickness * (pieces - 1) + avgKerf * (pieces - 2) + kerfTop / 2;
-                const topCut = (board - fromTop).toFixed(2);
+        const edge = 18.6;
+        const used = edge * 2 + kerfBottom + kerfTop;
+        const middle = board - used - wear;
 
-                output += "Толщина одной заготовки: <b>" + targetThickness.toFixed(2) + " мм</b><br>";
-                output += "Общая компенсация: <b>" + totalCompensation.toFixed(2) + " мм</b><br>";
-                output += "Скорость подачи: <b>" + feedSpeed.toFixed(0) + " мм/сек</b><br>";
-                output += "Глубина нижней пилы (от низа): <b>" + bottomCut + " мм</b><br>";
-                output += "Глубина верхней пилы (от верха): <b>" + topCut + " мм</b>";
+        const bottom_blade = edge + kerfBottom / 2;
+        const top_blade_center = board - (edge + kerfTop / 2);
+        const top_blade = board - top_blade_center;
 
-                final = "<b>✔ Готово:</b> Можно получить " + pieces + " заготовок по " +
-                        targetThickness.toFixed(2) + " мм из доски " + board.toFixed(2) + " мм";
-            }
+        document.getElementById("result").innerHTML =
+            "<b>Расчёт по краям 18.6 мм:</b><br><br>" +
+            "Глубина нижней пилы (от низа): <b>" + bottom_blade.toFixed(2) + " мм</b><br>" +
+            "Глубина верхней пилы (от верха): <b>" + top_blade.toFixed(2) + " мм</b><br><br>" +
+            "Толщина нижней доски: <b>" + edge.toFixed(2) + " мм</b><br>" +
+            "Толщина средней доски: <b>" + middle.toFixed(2) + " мм</b><br>" +
+            "Толщина верхней доски: <b>" + edge.toFixed(2) + " мм</b>";
+    }
+    
+    function calculateManual() {
+        const board = parseFloat(document.getElementById("board").value);
+        const kerfBottom = parseFloat(document.getElementById("kerfBottom").value);
+        const kerfTop = parseFloat(document.getElementById("kerfTop").value);
+        const wear = parseFloat(document.getElementById("wear").value);
+        const bottomDepth = parseFloat(document.getElementById("manualBottom").value);
+        const topDepth = parseFloat(document.getElementById("manualTop").value);
 
-            document.getElementById("result").innerHTML = output;
-            document.getElementById("finalResult").innerHTML = final;
+        if (isNaN(bottomDepth) || isNaN(topDepth)) {
+            document.getElementById("result").innerHTML = "<b>Пожалуйста, укажи обе глубины пил вручную!</b>";
+            return;
         }
+
+        const lower = bottomDepth - kerfBottom / 2;
+        const upper = topDepth - kerfTop / 2;
+        const middle = board - bottomDepth - topDepth - (kerfBottom + kerfTop) / 2;
+
+        document.getElementById("result").innerHTML =
+            "<b>Ручной расчёт:</b><br><br>" +
+            "Глубина нижней пилы (от низа): <b>" + bottomDepth.toFixed(2) + " мм</b><br>" +
+            "Глубина верхней пилы (от верха): <b>" + topDepth.toFixed(2) + " мм</b><br><br>" +
+            "Толщина нижней доски: <b>" + lower.toFixed(2) + " мм</b><br>" +
+            "Толщина средней доски: <b>" + middle.toFixed(2) + " мм</b><br>" +
+            "Толщина верхней доски: <b>" + upper.toFixed(2) + " мм</b>";
+    }
     </script>
+    
+    
 </body>
 </html>
